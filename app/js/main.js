@@ -10,19 +10,19 @@ var $addZones   = $('.addZones'),
 
 
 $addZones.on('click', function (event) {
+	event.preventDefault();	
 	if($aboutModal.is(':visible')) {
 		$aboutModal.fadeOut();
 	}
 	$addModal.toggle('slow');
-	event.preventDefault();	
 });
 
 $aboutUs.on('click', function (event) {
+	event.preventDefault();
 	if($addModal.is(':visible')) {
 		$addModal.fadeOut();
 	}
 	$aboutModal.toggle('slow');
-	event.preventDefault();
 });
 
 
@@ -87,11 +87,6 @@ var $barsZone    = $('.barsZone');
 
 var $line = $('.line');
 var initialHeight = 19;
-//Home animation
-
-setInterval(function () {
-	$('#home').fadeOut();
-}, 4000);
 
 //Storage
 
@@ -248,28 +243,6 @@ function setPosition () {
 	    var hourInt = strToInt(hoursStr);
 	    var minutesInt = strToInt(minutesStr);
 
-	    // Get the dates
-
-	    var barDate = $('.barDate').get(index);
-	    var barDateText = $(barDate).text();
-	    var barDateList = barDateText.split(' ');
-	    var dayStr = barDateList[1];
-	    var monthStr = barDateList[0];
-	    var dayInt = strToInt(dayStr);
-	    var monthNum = moment().month(monthStr).format('M');
-	    var monthInt = strToInt(monthNum);
-
-	    // Get current dates	
-	    	
-	    var	currentMonthStr = moment().format('M');
-	    var	currentDayStr = moment().format('D');
-	  
-
-	    var currentMonth = strToInt(currentMonthStr);
-	    var currentDay = strToInt(currentDayStr);
-	    
-	   
-
 	    // Get all width
 
 		var screenWidth = screen.width;
@@ -281,9 +254,8 @@ function setPosition () {
 		
 
 		var middlePosition = -halfWidth;
-		var nextDayMP = -(halfWidth + dayWidth);
-		var lastDayMP = -(halfWidth - dayWidth);
-		var minutesPosition = minuteWidth * minutesInt;
+		var minutesWith = minuteWidth * minutesInt;
+		var minutesPosition = (-minutesWith);
 
 
 	    function resetPosition () {
@@ -292,37 +264,16 @@ function setPosition () {
 
 	    resetPosition();
 
-		function resolveDayPosition () {
-			if(hourInt > 12){
-				return -(hourWidth * (hourInt - 12));
-			} else if(hourInt < 12){
-				return hourWidth * (12 - hourInt);
-			} else if(hourInt === 12){
-				return 0;
-			}
-		}
-
-		var dayPosition = resolveDayPosition();
-
-		if(monthInt === currentMonth && dayInt === currentDay){
-
-			resolvePosition(middlePosition + dayPosition + (-minutesPosition));
-
-		} else if(monthInt === currentMonth && dayInt < currentDay){
-
-			resolvePosition(lastDayMP + dayPosition + (-minutesPosition));
-
-		} else if(monthInt === currentMonth && dayInt > currentDay){
-
-			resolvePosition(nextDayMP + dayPosition + (-minutesPosition));
-
-		} else if(monthInt < currentMonth){
-
-			resolvePosition(lastDayMP + dayPosition + (-minutesPosition));
-
-		} else if(monthInt > currentMonth){
-
-			resolvePosition(nextDayMP + dayPosition + (-minutesPosition));	
+	    var hourPosition;
+		
+		if(hourInt > 12){
+			hourPosition = -(hourWidth * (hourInt - 12));
+			resolvePosition(middlePosition + hourPosition + minutesPosition);
+		} else if(hourInt < 12){
+			hourPosition = hourWidth * (12 - hourInt);
+			resolvePosition(middlePosition + hourPosition + minutesPosition);
+		} else if(hourInt === 12){
+			resolvePosition(middlePosition + minutesPosition);
 		}
 		
 	});
@@ -412,9 +363,6 @@ function addBars (event) {
 	$barsZone.append(barRender);
 	$('.infoBarsZone').append(infoBarRender);
 
-	$('.day').each(function (index, element) {
-		$(element).attr('id', 'day-' + index);
-	});
 
 	lineDown();
 
@@ -521,8 +469,8 @@ function moveBars () {
 	    		var renderDate = moment(time, 'HH:mm').subtract(1, 'd').format('MMMM DD');
 	    		$($('.barDate')[index]).html(renderDate);
 	    	} else if($(collides.targets[index]).is('.bars .day:nth-child(2)')){
-	    		var renderDate = moment(time, 'HH:mm').format('MMMM DD');
-	    		$($('.barDate')[index]).html(renderDate);
+	    		var renderCurrentDate = moment(time, 'HH:mm').format('MMMM DD');
+	    		$($('.barDate')[index]).html(renderCurrentDate);
 	    	}
 	    });
 
@@ -553,8 +501,8 @@ function moveBars () {
 	    		var renderDate = moment(time, 'HH:mm').add(1, 'd').format('MMMM DD');
 	    		$($('.barDate')[index]).html(renderDate);
 	    	} else if($(collides.targets[index]).is('.bars .day:nth-child(2)')){
-	    		var renderDate = moment(time, 'HH:mm').format('MMMM DD');
-	    		$($('.barDate')[index]).html(renderDate);
+	    		var renderCurrentDate = moment(time, 'HH:mm').format('MMMM DD');
+	    		$($('.barDate')[index]).html(renderCurrentDate);
 	    	}
 
 

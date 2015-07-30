@@ -1,6 +1,64 @@
 
 'use strict';
 
+var moment = window.moment;
+var Handlebars = window.Handlebars;
+var Hammer = window.Hammer;
+
+//Classes
+
+function Times () {
+  this.now = moment().format('HH:mm');
+}
+
+Times.prototype.incrementTime = function(time) {
+  return moment(time, 'HH:mm').add(10, 'm').format('HH:mm');
+};
+
+Times.prototype.decrementTime = function(time) {
+  return moment(time, 'HH:mm').subtract(10, 'm').format('HH:mm');
+};
+
+Times.prototype.incrementDay = function(date) {
+  return moment(date, 'HH:mm').add(1, 'd').format('MMMM DD');
+};
+
+Times.prototype.decrementDay = function(date) {
+  return moment(date, 'HH:mm').subtract(1, 'd').format('MMMM DD');
+};
+
+Times.prototype.currentTime = function(time) {
+  return moment(time, 'HH:mm').format('MMMM DD');
+};
+
+Times.prototype.printTime = function() {
+  $('#your_time').html(this.now);
+  $('#current_time').html(this.now);
+};
+
+function Bars () {
+
+}
+
+function Lines () {
+
+}
+
+function Positions () {
+
+}
+
+function Movements () {
+
+}
+
+function Collides () {
+
+}
+
+var times = new Times();
+
+
 // Menus Dropdown
 
 var $addZones   = $('.addZones'),
@@ -10,7 +68,7 @@ var $addZones   = $('.addZones'),
 
 
 $addZones.on('click', function (event) {
-	event.preventDefault();	
+	event.preventDefault();
 	if($aboutModal.is(':visible')) {
 		$aboutModal.fadeOut();
 	}
@@ -34,7 +92,7 @@ var TimeZones = {
 	zones: [
 		{
 			zone: 'America/Los_Angeles',
-			city: 'Los Angeles' 
+			city: 'Los Angeles'
 		},
 		{
 			zone: 'America/Mexico_City',
@@ -90,6 +148,8 @@ var initialHeight = 19;
 
 //Storage
 
+
+
 var bars = [];
 
 function saveBars (action, bar) {
@@ -99,7 +159,7 @@ function saveBars (action, bar) {
 		var index = bars.indexOf(bar);
 		bars.splice(index, 1);
 	}
-	
+
 	localStorage.setItem('bars', JSON.stringify(bars));
 }
 
@@ -134,8 +194,7 @@ function loadStorageBars () {
 		$barsZone.append(renderCurrentBars);
 		$('.infoBarsZone').append(renderStorageBars);
 
-		printYourTime();
-		printCurrentTime();
+		times.printTime();
 		lineDown();
 		setPosition();
 		overBar();
@@ -152,19 +211,8 @@ if(localStorage.length > 0){
 }
 
 //Tags info
-	
-function printCurrentTime () {
-	var currentTime = moment().format('HH:mm');
-	$('#current_time').html(currentTime);
-}		
- 
-function printYourTime () {
-	var yourTime = moment().format('HH:mm');
-	$('#your_time').html(yourTime);
-}
 
-printCurrentTime();
-printYourTime();
+times.printTime();
 
 
 //Add Cities List to Menu Dropdown
@@ -182,7 +230,7 @@ $.each(TimeZones.zones, function (index) {
 	} else {
 		TimeZones.zones[index].utc = '+' + offSetStr;
 	}
-	
+
 });
 
 
@@ -210,7 +258,7 @@ function barsStatus () {
 		});
 	});
 }
-	
+
 barsStatus();
 
 //Bars position
@@ -219,53 +267,49 @@ function setPosition () {
 
 	$('.barInfo').each(function (index) {
 
-		function strToInt (str) {
-			return parseInt(str, 10);
-		}
+    var $barTime = $('.barTime');
+    var $bars    = $('.bars');
 
-        var $barTime = $('.barTime');
-        var $bars    = $('.bars');
+    var bar = $bars.get(index);
 
-        var bar = $bars.get(index);
-
-	    function resolvePosition (position) {
-	    	$(bar).css('left', position);
-	    }
+    function resolvePosition (position) {
+    	$(bar).css('left', position);
+    }
 
 
 		// Get the times
 
 		var barTime = $barTime.get(index);
 		var barTimeText = $(barTime).text();
-	    var barTimeList = barTimeText.split(':');
-	    var hoursStr = barTimeList[0];
-	    var minutesStr = barTimeList[1];
-	    var hourInt = strToInt(hoursStr);
-	    var minutesInt = strToInt(minutesStr);
+    var barTimeList = barTimeText.split(':');
+    var hoursStr = barTimeList[0];
+    var minutesStr = barTimeList[1];
+    var hourInt = Number(hoursStr);
+    var minutesInt = Number(minutesStr);
 
-	    // Get all width
+    // Get all width
 
 		var screenWidth = screen.width;
 		var barsWidth = $bars.width();
 		var halfWidth = (barsWidth / 2) - (screenWidth / 2);
-	    var dayWidth = $('.day').width();
-	    var hourWidth = dayWidth / 24;
-	    var minuteWidth = hourWidth / 60;
-		
+    var dayWidth = $('.day').width();
+    var hourWidth = dayWidth / 24;
+    var minuteWidth = hourWidth / 60;
+
 
 		var middlePosition = -halfWidth;
 		var minutesWith = minuteWidth * minutesInt;
 		var minutesPosition = (-minutesWith);
 
 
-	    function resetPosition () {
-	    	$('.moveZone').css('left', 0);
-	    }
+    function resetPosition () {
+    	$('.moveZone').css('left', 0);
+    }
 
-	    resetPosition();
+    resetPosition();
 
-	    var hourPosition;
-		
+    var hourPosition;
+
 		if(hourInt > 12){
 			hourPosition = -(hourWidth * (hourInt - 12));
 			resolvePosition(middlePosition + hourPosition + minutesPosition);
@@ -275,12 +319,12 @@ function setPosition () {
 		} else if(hourInt === 12){
 			resolvePosition(middlePosition + minutesPosition);
 		}
-		
+
 	});
 }
 
 
-	
+
 //Add and remove bars to barsZone
 
 
@@ -301,9 +345,9 @@ function lineDown () {
 	var totalHeight = barsHeight + initialHeight;
 
 	if (lineHeight === initialHeight) {
-		$line.css('height', initialHeight);	
+		$line.css('height', initialHeight);
 	}
-	
+
 	$line.css('height', totalHeight);
 }
 
@@ -321,29 +365,29 @@ function addBars (event) {
 	event.preventDefault();
 	var $button = $(event.target);
 
-	$button
-    	.css('color', 'grey')
-    	.off('click', addBars);
+  $button
+  	.css('color', 'grey')
+  	.off('click', addBars);
 
-    $button
-    	.siblings('.removeCity')
-    	.on('click', removeBars)
-    	.css('color', '#7C092A');
+  $button
+  	.siblings('.removeCity')
+  	.on('click', removeBars)
+  	.css('color', '#7C092A');
 
-    $('.barInfo').each(function (index) {
-    	var actualyCity = $($('.barCity')[index]).text();
-    	var actualyZone;
-    	$.each(TimeZones.zones, function (i, value) {
-    		if(actualyCity === value.city){
-    			actualyZone = value.zone;
-    		}
+  $('.barInfo').each(function (index) {
+  	var actualyCity = $($('.barCity')[index]).text();
+  	var actualyZone;
+  	$.each(TimeZones.zones, function (i, value) {
+  		if(actualyCity === value.city){
+  			actualyZone = value.zone;
+  		}
 
-    	});
+  	});
 
-    	$($('.barTime')[index]).html(moment().tz(actualyZone).format('HH:mm'));
-    	$($('.barDate')[index]).html(moment().tz(actualyZone).format('MMMM DD'));
-    	
-    });
+  	$($('.barTime')[index]).html(moment().tz(actualyZone).format('HH:mm'));
+  	$($('.barDate')[index]).html(moment().tz(actualyZone).format('MMMM DD'));
+
+  });
 
 	var city = resolveCity($button);
 	var indexZones = $button.parent().index();
@@ -359,7 +403,7 @@ function addBars (event) {
 
 	var barRender = $currentBar.html();
 	var infoBarRender = resolveTemplates($infoBar, barData);
-	
+
 	$barsZone.append(barRender);
 	$('.infoBarsZone').append(infoBarRender);
 
@@ -368,12 +412,11 @@ function addBars (event) {
 
 	saveBars('add', city);
 
-    printCurrentTime();
-    printYourTime();
-    setPosition();
-    overBar();
-    moveBars();
-   
+  times.printTime();
+  setPosition();
+  overBar();
+  moveBars();
+
 
 }
 
@@ -392,7 +435,7 @@ function removeBars (event) {
 
 	var city = resolveCity($button);
 	var $barCity = $('.barCity');
-	
+
 	saveBars('remove', city);
 
 	$barCity.each(function (index, element) {
@@ -404,7 +447,7 @@ function removeBars (event) {
 		}
 	});
 
-	
+
 	lineUp();
 }
 
@@ -419,19 +462,19 @@ function overBar () {
 	var collides = $day.overlaps($line);
 	var barsLength = $('.bar').length;
 	var collidesLength = collides.targets.length;
-	
-	$('.barTime').each(function (index, element) {
+
+  $('.barTime').each(function (index, element) {
 		var time = $(element).text();
 		var yourTagTime = $('#your_time').text();
 		if(time === yourTagTime && collidesLength === barsLength){
 			$day.removeClass('yourOnBar');
 			$(collides.targets[index]).removeClass('onBar');
-			$(collides.targets[index]).addClass('yourOnBar');		
+			$(collides.targets[index]).addClass('yourOnBar');
 		} else if(time !== yourTagTime && collidesLength === barsLength){
 			$day.removeClass('onBar');
 			$(collides.targets).addClass('onBar');
 		}
-	});	
+	});
 }
 
 
@@ -450,31 +493,31 @@ function moveBars () {
 
 	function moveRight () {
 		var position = $('.moveZone').position();
-	    var yourTimeText = $('#your_time').text();
-	    var renderYourTime = moment(yourTimeText, 'HH:mm').subtract(10, 'm').format('HH:mm');
-	    
-	    var $line = $('#line');
+    var yourTimeText = $('#your_time').text();
+    var renderYourTime = times.decrementTime(yourTimeText);
+
+    var $line = $('#line');
 		var $day = $('.day');
 		var collides = $day.overlaps($line);
 
-	    $('.moveZone').css('left', position.left + distance);
-	    
-	    $('.barTime').each(function (index, element) {
-	   		var time = $(element).text();
-	 
-	    	var renderTime = moment(time, 'HH:mm').subtract(10, 'm').format('HH:mm');
-	    	$(this).html(renderTime);
+    $('.moveZone').css('left', position.left + distance);
 
-	    	if($(collides.targets[index]).is('.bars .day:first-child')){
-	    		var renderDate = moment(time, 'HH:mm').subtract(1, 'd').format('MMMM DD');
-	    		$($('.barDate')[index]).html(renderDate);
-	    	} else if($(collides.targets[index]).is('.bars .day:nth-child(2)')){
-	    		var renderCurrentDate = moment(time, 'HH:mm').format('MMMM DD');
-	    		$($('.barDate')[index]).html(renderCurrentDate);
-	    	}
-	    });
+    $('.barTime').each(function (index, element) {
+   		var time = $(element).text();
 
-	    $('#your_time').html(renderYourTime);
+    	var renderTime = times.decrementTime(time);
+    	$(this).html(renderTime);
+
+    	if($(collides.targets[index]).is('.bars .day:first-child')){
+    		var renderDate = times.decrementDay(time);
+    		$($('.barDate')[index]).html(renderDate);
+    	} else if($(collides.targets[index]).is('.bars .day:nth-child(2)')){
+    		var renderCurrentDate = times.currentTime(time);
+    		$($('.barDate')[index]).html(renderCurrentDate);
+    	}
+    });
+
+    $('#your_time').html(renderYourTime);
 
 		overBar();
 	}
@@ -483,7 +526,7 @@ function moveBars () {
 
 	    var position = $('.moveZone').position();
 	    var yourTimeText = $('#your_time').text();
-	    var renderYourTime = moment(yourTimeText, 'HH:mm').add(10, 'm').format('HH:mm');
+	    var renderYourTime = times.incrementTime(yourTimeText);
 	    var $line = $('#line');
 	    var $day = $('.day');
 	    var collides = $day.overlaps($line);
@@ -491,23 +534,23 @@ function moveBars () {
 	    $('.moveZone').css('left', position.left + (-distance));
 
 	    $('.barTime').each(function (index, element) {
-	    	
+
 	   		var time = $(element).text();
-	   		
-	    	var renderTime = moment(time, 'HH:mm').add(10, 'm').format('HH:mm');
+
+	    	var renderTime = times.incrementTime(time);
 	    	$(this).html(renderTime);
 
 	    	if($(collides.targets[index]).is('.bars .day:last-child')){
-	    		var renderDate = moment(time, 'HH:mm').add(1, 'd').format('MMMM DD');
+	    		var renderDate = times.incrementDay(time);
 	    		$($('.barDate')[index]).html(renderDate);
 	    	} else if($(collides.targets[index]).is('.bars .day:nth-child(2)')){
-	    		var renderCurrentDate = moment(time, 'HH:mm').format('MMMM DD');
+	    		var renderCurrentDate = times.currentTime(time);
 	    		$($('.barDate')[index]).html(renderCurrentDate);
 	    	}
 
 
 	    });
-	    
+
 	    $('#your_time').html(renderYourTime);
 
 		overBar();

@@ -1,87 +1,26 @@
+(function ($) {
 
 'use strict';
 
 var moment = window.moment;
 var Handlebars = window.Handlebars;
 var Hammer = window.Hammer;
-
-//Classes
-
-function Times () {
-  this.now = moment().format('HH:mm');
-}
-
-Times.prototype.incrementTime = function(time) {
-  return moment(time, 'HH:mm').add(10, 'm').format('HH:mm');
-};
-
-Times.prototype.decrementTime = function(time) {
-  return moment(time, 'HH:mm').subtract(10, 'm').format('HH:mm');
-};
-
-Times.prototype.incrementDay = function(date) {
-  return moment(date, 'HH:mm').add(1, 'd').format('MMMM DD');
-};
-
-Times.prototype.decrementDay = function(date) {
-  return moment(date, 'HH:mm').subtract(1, 'd').format('MMMM DD');
-};
-
-Times.prototype.currentTime = function(time) {
-  return moment(time, 'HH:mm').format('MMMM DD');
-};
-
-Times.prototype.printTime = function() {
-  $('#your_time').html(this.now);
-  $('#current_time').html(this.now);
-};
-
-function Bars () {
-
-}
-
-function Lines () {
-
-}
-
-function Positions () {
-
-}
-
-function Movements () {
-
-}
-
-function Collides () {
-
-}
+var Times = window.Times;
+var Menus = window.Menus;
 
 var times = new Times();
+var menus = new Menus();
 
+function init () {
+  times.printTime();
+  menus.active();
+}
 
-// Menus Dropdown
+setInterval(function () {
+  $('#home').fadeOut();
+}, 2000);
 
-var $addZones   = $('.addZones'),
-	$aboutUs    = $('.aboutUs'),
-	$aboutModal = $('.aboutModal'),
-	$addModal   = $('.addModal');
-
-
-$addZones.on('click', function (event) {
-	event.preventDefault();
-	if($aboutModal.is(':visible')) {
-		$aboutModal.fadeOut();
-	}
-	$addModal.toggle('slow');
-});
-
-$aboutUs.on('click', function (event) {
-	event.preventDefault();
-	if($addModal.is(':visible')) {
-		$addModal.fadeOut();
-	}
-	$aboutModal.toggle('slow');
-});
+init();
 
 
 //Globals
@@ -212,7 +151,7 @@ if(localStorage.length > 0){
 
 //Tags info
 
-times.printTime();
+
 
 
 //Add Cities List to Menu Dropdown
@@ -251,9 +190,9 @@ function barsStatus () {
 			    	.css('color', 'grey')
 			    	.off('click', addBars);
 
-			    $($('.removeCity')[i])
-			    	.on('click', removeBars)
-			    	.css('color', '#7C092A');
+		    $($('.removeCity')[i])
+		    	.on('click', removeBars)
+		    	.css('color', '#7C092A');
 			}
 		});
 	});
@@ -275,7 +214,6 @@ function setPosition () {
     function resolvePosition (position) {
     	$(bar).css('left', position);
     }
-
 
 		// Get the times
 
@@ -407,7 +345,6 @@ function addBars (event) {
 	$barsZone.append(barRender);
 	$('.infoBarsZone').append(infoBarRender);
 
-
 	lineDown();
 
 	saveBars('add', city);
@@ -416,7 +353,6 @@ function addBars (event) {
   setPosition();
   overBar();
   moveBars();
-
 
 }
 
@@ -570,3 +506,4 @@ $('.addsClose').click(function () {
 });
 
 //TODO
+})(jQuery);

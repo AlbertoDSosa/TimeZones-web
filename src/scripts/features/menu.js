@@ -1,12 +1,14 @@
 'use strict';
 
 var $ = require('jquery');
+var template = require('../templates');
 
 function Menu () {
   this.$addZones   = $('.addZones');
   this.$aboutUs    = $('.aboutUs');
   this.$aboutModal = $('.aboutModal');
   this.$addModal   = $('.addModal');
+  this.$addContent = $('.addContent');
 }
 
 Menu.prototype.active = function() {
@@ -25,6 +27,15 @@ Menu.prototype.active = function() {
       self.$addModal.fadeOut();
     }
     self.$aboutModal.toggle('slow');
+  });
+};
+
+Menu.prototype.listCities = function() {
+  var self = this;
+
+  $.each(template.zones, function (index, value) {
+    var html = template.city(value);
+    self.$addContent.append(html);
   });
 };
 

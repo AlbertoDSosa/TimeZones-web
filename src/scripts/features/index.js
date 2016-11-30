@@ -2,16 +2,13 @@
 
 // Private functions
 
+
+
 /*
-var $addContent = $('.addContent');
+*/
+
 var $barsZone    = $('.barsZone');
 
-function resolveTemplates($el, data) {
-	var source   = $el.html(),
-      template = Handlebars.compile(source),
-      html     = template(data);
-	return html;
-}*/
 
 /*function resolveCity ($el) {
 	var city = $el
@@ -140,32 +137,10 @@ function removeBars (event) {
 	lineUp();
 }*/
 
-//Add Cities List to Menu Dropdown
 
 
-/*$.each(TimeZones.zones, function (index) {
 
-	var zone = TimeZones.zones[index].zone;
-	var timeZone = moment.tz(zone);
-	var offSet = timeZone._offset;
-	var offSetHr = offSet / 60;
-	var offSetStr = offSetHr.toString();
-
-	if (offSetStr.substring(0, 1) === '-') {
-		TimeZones.zones[index].utc = offSetStr;
-	} else {
-		TimeZones.zones[index].utc = '+' + offSetStr;
-	}
-
-});
-
-
-var cities = resolveTemplates($city, TimeZones);
-
-$addContent.html(cities);
-
-$('.addCity').on('click', addBars);
-
+/*
 function barsStatus () {
 	$('.barCity').each(function (index, element) {
 		var cityBar = $(element).text();
@@ -273,7 +248,7 @@ if(localStorage.length > 0){
 }*/
 
 //Move Bars
-f/*unction moveBars () {
+/*function moveBars () {
 
 	var content = document.querySelector('.content');
 	var move = new Hammer(content, {
@@ -357,8 +332,3 @@ f/*unction moveBars () {
 
 
 
-//adds
-
-/*$('.addsClose').click(function () {
-	$('.adds').fadeOut();
-});*/

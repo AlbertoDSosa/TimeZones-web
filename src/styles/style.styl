@@ -2,12 +2,6 @@
 @import 'nib'
 @import 'fonts'
 
-
-
-//Mixins
-
-	
-//Globals
  
 body
 	background #232426
@@ -45,8 +39,8 @@ body
 	
 	
 .headerContent
-	width 19.45em
-	display flex
+	width 320px
+	display inline-flex
 	padding-top .6em
 	margin 0 auto
 	
@@ -56,8 +50,11 @@ body
 	color white
 	font-size 2.3em
 	
+.addZones
+	margin-left .1em
 .aboutUs
-	margin-left .2em
+	margin-right .1em
+	
 .aboutModal
 	display none
 	position fixed
@@ -88,9 +85,6 @@ body
 			text-align justify
 			h3
 				font-family 'open_sansregular'	
-	
-
-	
 
 .addModal
 	display none
@@ -127,7 +121,7 @@ body
 				margin-left .5em
 				.cityName
 					font-family 'open_sansbold'
-					margin 0
+					margin-right .5em
 				small
 					font-family 'open_sansitalic'
 					color grey
@@ -147,10 +141,9 @@ body
 	margin 0 auto
 	.singular
 		font-size .95em
-		position relative
-		right: -.25em
+		
 	.timeZones
-		font-size .95em
+		font-size 1em
 		
 
 		
@@ -405,10 +398,12 @@ body
 
 //Media querys
 
-@media screen and (min-width:339px)
+@media screen and (min-width:359px)
 
 	body
 		font-size 18px
+	.headerContent
+		width 360px
 
 
 @media screen and (min-width:376px)

@@ -475,13 +475,13 @@ body {
   z-index: 10;
 }
 .headerContent {
-  width: 19.45em;
-  display: -webkit-box;
-  display: -moz-box;
-  display: -webkit-flex;
-  display: -ms-flexbox;
-  display: box;
-  display: flex;
+  width: 320px;
+  display: -webkit-inline-box;
+  display: -moz-inline-box;
+  display: -webkit-inline-flex;
+  display: -ms-inline-flexbox;
+  display: inline-box;
+  display: inline-flex;
   padding-top: 0.6em;
   margin: 0 auto;
 }
@@ -490,8 +490,11 @@ body {
   color: #fff;
   font-size: 2.3em;
 }
+.addZones {
+  margin-left: 0.1em;
+}
 .aboutUs {
-  margin-left: 0.2em;
+  margin-right: 0.1em;
 }
 .aboutModal {
   display: none;
@@ -569,7 +572,7 @@ body {
 }
 .addModal .addContent .city .cityInfo .cityName {
   font-family: 'open_sansbold';
-  margin: 0;
+  margin-right: 0.5em;
 }
 .addModal .addContent .city .cityInfo small {
   font-family: 'open_sansitalic';
@@ -591,11 +594,9 @@ body {
 }
 .title .singular {
   font-size: 0.95em;
-  position: relative;
-  right: -0.25em;
 }
 .title .timeZones {
-  font-size: 0.95em;
+  font-size: 1em;
 }
 .content {
   width: 100%;
@@ -877,9 +878,12 @@ body {
   top: -0.75em;
   right: -0.75em;
 }
-@media screen and (min-width: 339px) {
+@media screen and (min-width: 359px) {
   body {
     font-size: 18px;
+  }
+  .headerContent {
+    width: 360px;
   }
 }
 @media screen and (min-width: 376px) {

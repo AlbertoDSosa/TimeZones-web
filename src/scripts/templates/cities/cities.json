@@ -1,0 +1,40 @@
+{
+	"zones": [
+		{
+			"zone": "America/Los_Angeles",
+			"city": "Los Angeles"
+		},
+		{
+			"zone": "America/Mexico_City",
+			"city": "Mexico City"
+		},
+		{
+			"zone": "America/Caracas",
+			"city": "Caracas"
+		},
+		{
+			"zone": "America/Sao_Paulo",
+			"city": "Sao Paolo"
+		},
+		{
+			"zone": "Europe/London",
+			"city": "London"
+		},
+		{
+			"zone": "Europe/Paris",
+			"city": "Paris"
+		},
+		{
+			"zone": "Europe/Moscow",
+			"city": "Moscow"
+		},
+		{
+			"zone": "Asia/Singapore",
+			"city": "Singapore"
+		},
+		{
+			"zone": "Asia/Tokyo",
+			"city": "Tokyo"
+		}
+	]
+}

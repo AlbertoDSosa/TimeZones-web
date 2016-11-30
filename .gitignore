@@ -1,6 +1,4 @@
 node_modules
-app/vendor
+mobil
 *.log
-.DS_Store
-platforms/**
-www
+build

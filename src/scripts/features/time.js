@@ -1,6 +1,7 @@
 'use strict';
 
 var moment = require('moment');
+var $ = require('jquery');
 
 function Time () {
     this.now = moment().format('HH:mm');

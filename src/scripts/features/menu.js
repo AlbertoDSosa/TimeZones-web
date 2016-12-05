@@ -9,7 +9,11 @@ function Menu () {
   this.$aboutModal = $('.aboutModal');
   this.$addModal   = $('.addModal');
   this.$addContent = $('.addContent');
+  this.$buttomAdd = $('.addCity');
+  this.$buttonRemove = $('.removeCity');
+
 }
+
 
 Menu.prototype.active = function() {
   var self = this;

@@ -15992,6 +15992,229 @@ return hooks;
 
 var $ = require('jquery');
 var template = require('../templates');
+var line = require('./line');
+var Time = require('./time');
+var moment = require('moment-timezone');
+
+var list = [];
+var $cover = $('.bar');
+var $days = $('.bars');
+var $day = $('.day');
+var $off = $('.offBar');
+var $on = $('.onBar');
+var $date = $('.barDate');
+var $time = $('.barTime');
+var $moveZone = $('.moveZone');
+var $zone = $('.barsZone');
+var $infoZone = $('.infoBarsZone');
+
+function _getCity ($el) {
+  var city = $el
+    .siblings('.cityInfo')
+    .children('.cityName')
+    .text();
+  return city;
+}
+function _setBarInfo (city) {
+  var data = {};
+  $.each(template.zones, function (index, element) {
+    if(city === element.city){
+      var zone = moment.tz(element.zone);
+      data.city = element.city;
+      data.time = zone.format('HH:mm');
+      data.date = zone.format('MMMM DD');
+    }
+  });
+
+  return data;
+}
+
+var _render = function(place, template, data) {
+  data = data || {};
+  place.append(template(data));
+};
+
+function _getBar (city) {
+  var bar = {};
+  $('.barCity').each(function (index, element) {
+    var cityBar = $(element).text();
+    if(city === cityBar){
+      bar.info = $('.barInfo')[index];
+      bar.element = $('.bar')[index];
+    }
+
+  });
+  return bar;
+}
+
+function _toggleButton (action, button) {
+  if(action === 'add') {
+    button
+    .css('color', 'grey')
+    .off('click', add);
+
+    button
+      .siblings('.removeCity')
+      .on('click', remove)
+      .css('color', '#7C092A')
+  } else {
+    button
+      .css('color', 'grey')
+      .off('click', remove);
+
+    button
+      .siblings('.addCity')
+      .on('click', add)
+      .css('color', '#36A5B0');
+  }
+}
+
+
+var _getBarTime = function(index) {
+  var barTime = $time.get(index);
+  var barTimeText = $(barTime).text();
+  var barTimeList = barTimeText.split(':');
+  var hoursStr = barTimeList[0];
+  var minutesStr = barTimeList[1];
+  var time = {
+    hour: Number(hoursStr),
+    minutes: Number(minutesStr)
+  };
+  return time;
+};
+
+var _resetPosition = function() {
+  $moveZone.css('left', 0);
+};
+
+var _resolvePosition = function(bar, position) {
+  $(bar).css('left', position);
+};
+
+
+var add = function (event) {
+  
+  event.preventDefault();
+
+  var $button = $(event.target);
+  var city = _getCity($button);
+
+  var data = _setBarInfo(city)
+
+  _toggleButton('add', $button);
+
+  $.when(_render($zone, template.bar))
+    .then(function () {
+      _render($infoZone, template.barInfo, data)
+      line.getDown()
+    });
+};
+
+var remove = function(event) {
+  event.preventDefault();
+  var $button = $(event.target);
+  var city = _getCity($button);
+  var bar = _getBar(city);
+  
+  _toggleButton('remove', $button);
+
+  $(bar.info).remove();
+  $(bar.element).remove();
+  
+};
+
+var setPosition = function() {
+
+  $info.each(function (index) {
+    var bar = $days.get(index);
+    var screenWidth = screen.width;
+    var barsWidth = $days.width();
+    var halfWidth = (barsWidth / 2) - (screenWidth / 2);
+    var dayWidth = $day.width();
+    var hourWidth = dayWidth / 24;
+    var minuteWidth = hourWidth / 60;
+
+    var time = _getBarTime(index);
+
+    var middlePosition = -halfWidth;
+    var minutesWith = minuteWidth * time.minutes;
+    var minutesPosition = (-minutesWith);
+
+    var hourPosition,
+        position;
+
+    _resetPosition();
+
+    if(time.hour > 12){
+      hourPosition = -(hourWidth * (time.hour - 12));
+      position = middlePosition + hourPosition + minutesPosition;
+      _resolvePosition(bar, position);
+    } else if(time.hour < 12){
+      hourPosition = hourWidth * (12 - time.hour);
+      position = middlePosition + hourPosition + minutesPosition;
+      _resolvePosition(bar, position);
+    } else if(time.hour === 12){
+      position = middlePosition + minutesPosition;
+      _resolvePosition(bar, position);
+    }
+  });
+};
+
+module.exports = {
+  add: add,
+  remove: remove,
+  setPosition: setPosition,
+  zone: $zone
+}
+},{"../templates":17,"./line":9,"./time":11,"jquery":3,"moment-timezone":5}],9:[function(require,module,exports){
+'use strict';
+
+var $ = require('jquery');
+
+
+var $line = $('.line');
+var initialHeight = 19;
+
+function _getValues() {
+	
+	var barsHeight = $('.barsZone').height();
+	var lineHeight = $line.height();
+  var totalHeight = barsHeight + initialHeight;
+
+  return {
+  	lineHeight: lineHeight,
+  	totalHeight: totalHeight
+  }
+}
+
+function getUp () {
+	var value = _getValues();
+
+	if (value.lineHeight > initialHeight) {
+		$line.css('height', value.totalHeight);
+	}
+}
+
+function getDown () {
+	var value = _getValues();
+
+	if (value.lineHeight === initialHeight) {
+		$line.css('height', initialHeight);
+	}
+
+	$line.css('height', value.totalHeight);
+	
+}
+
+module.exports = {
+	getUp: getUp,
+	getDown: getDown
+}
+},{"jquery":3}],10:[function(require,module,exports){
+'use strict';
+
+var $ = require('jquery');
+var template = require('../templates');
 
 function Menu () {
   this.$addZones   = $('.addZones');
@@ -15999,7 +16222,11 @@ function Menu () {
   this.$aboutModal = $('.aboutModal');
   this.$addModal   = $('.addModal');
   this.$addContent = $('.addContent');
+  this.$buttomAdd = $('.addCity');
+  this.$buttonRemove = $('.removeCity');
+
 }
+
 
 Menu.prototype.active = function() {
   var self = this;
@@ -16030,23 +16257,75 @@ Menu.prototype.listCities = function() {
 };
 
 module.exports = Menu;
-},{"../templates":14,"jquery":3}],9:[function(require,module,exports){
+},{"../templates":17,"jquery":3}],11:[function(require,module,exports){
+'use strict';
+
+var moment = require('moment');
+var $ = require('jquery');
+
+function Time () {
+    this.now = moment().format('HH:mm');
+  }
+
+  Time.prototype.incrementTime = function(time) {
+    return moment(time, 'HH:mm').add(10, 'm').format('HH:mm');
+  };
+
+  Time.prototype.decrementTime = function(time) {
+    return moment(time, 'HH:mm').subtract(10, 'm').format('HH:mm');
+  };
+
+  Time.prototype.incrementDay = function(date) {
+    return moment(date, 'HH:mm').add(1, 'd').format('MMMM DD');
+  };
+
+  Time.prototype.decrementDay = function(date) {
+    return moment(date, 'HH:mm').subtract(1, 'd').format('MMMM DD');
+  };
+
+  Time.prototype.currentTime = function(time) {
+    return moment(time, 'HH:mm').format('MMMM DD');
+  };
+
+  Time.prototype.printTime = function() {
+    $('#your_time').html(this.now);
+    $('#current_time').html(this.now);
+  };
+
+  module.exports = Time;
+},{"jquery":3,"moment":7}],12:[function(require,module,exports){
 'use strict';
 
 var $ = require('jquery');
 var Menu = require('./features/menu');
-var template = require('./templates')
+var template = require('./templates');
+var Time = require('./features/time');
+var bar = require('./features/bar');
+var line = require('./features/line');
 
 $('#home').hide();
 
 var menu = new Menu();
+var time = new Time();
 
 menu.active();
-menu.listCities();
+
+$.when(menu.listCities()).then(function () {
+	var addMenu = new Menu();
+	addMenu.$buttomAdd
+		.on('click', bar.add)
+})
+
+
+time.printTime();
 
 $('.addsClose').click(function () {
 	$('.adds').fadeOut();
 });
+
+
+
+
 
 /*setInterval(function () {
   $('#home').fadeOut();
@@ -16060,7 +16339,7 @@ $('.addsClose').click(function () {
 
 
 
-},{"./features/menu":8,"./templates":14,"jquery":3}],10:[function(require,module,exports){
+},{"./features/bar":8,"./features/line":9,"./features/menu":10,"./features/time":11,"./templates":17,"jquery":3}],13:[function(require,module,exports){
 var jade = require("jade/runtime");
 
 module.exports = function template(locals) {
@@ -16070,7 +16349,7 @@ var jade_interp;
 ;var locals_for_with = (locals || {});(function (city, date, time) {
 buf.push("<div class=\"barInfo\"><span class=\"barTime\">" + (jade.escape((jade_interp = time) == null ? '' : jade_interp)) + "</span><div class=\"barText\"><span class=\"barCity\">" + (jade.escape((jade_interp = city) == null ? '' : jade_interp)) + "</span><small class=\"barDate\">" + (jade.escape((jade_interp = date) == null ? '' : jade_interp)) + "</small></div></div>");}.call(this,"city" in locals_for_with?locals_for_with.city:typeof city!=="undefined"?city:undefined,"date" in locals_for_with?locals_for_with.date:typeof date!=="undefined"?date:undefined,"time" in locals_for_with?locals_for_with.time:typeof time!=="undefined"?time:undefined));;return buf.join("");
 };
-},{"jade/runtime":2}],11:[function(require,module,exports){
+},{"jade/runtime":2}],14:[function(require,module,exports){
 var jade = require("jade/runtime");
 
 module.exports = function template(locals) {
@@ -16080,7 +16359,7 @@ var jade_interp;
 
 buf.push("<div class=\"bar\"><div class=\"bars\"><div class=\"day offBar\"><div class=\"midnight\"></div><div class=\"morning\"></div><div class=\"noon\"></div><div class=\"afternoon\"></div><div class=\"night\"></div></div><div class=\"day offBar\"><div class=\"midnight\"></div><div class=\"morning\"></div><div class=\"noon\"></div><div class=\"afternoon\"></div><div class=\"night\"></div></div><div class=\"day offBar\"><div class=\"midnight\"></div><div class=\"morning\"></div><div class=\"noon\"></div><div class=\"afternoon\"></div><div class=\"night\"></div></div></div></div>");;return buf.join("");
 };
-},{"jade/runtime":2}],12:[function(require,module,exports){
+},{"jade/runtime":2}],15:[function(require,module,exports){
 module.exports={
 	"zones": [
 		{
@@ -16121,7 +16400,7 @@ module.exports={
 		}
 	]
 }
-},{}],13:[function(require,module,exports){
+},{}],16:[function(require,module,exports){
 var jade = require("jade/runtime");
 
 module.exports = function template(locals) {
@@ -16131,7 +16410,7 @@ var jade_interp;
 ;var locals_for_with = (locals || {});(function (city, utc) {
 buf.push("<div class=\"city\"><div class=\"removeCity icon-highlight-remove\"></div><div class=\"cityInfo\"><span class=\"cityName\">" + (jade.escape((jade_interp = city) == null ? '' : jade_interp)) + "</span><small>UTC " + (jade.escape((jade_interp = utc) == null ? '' : jade_interp)) + "</small></div><div class=\"addCity icon-add-circle-outline\"></div></div>");}.call(this,"city" in locals_for_with?locals_for_with.city:typeof city!=="undefined"?city:undefined,"utc" in locals_for_with?locals_for_with.utc:typeof utc!=="undefined"?utc:undefined));;return buf.join("");
 };
-},{"jade/runtime":2}],14:[function(require,module,exports){
+},{"jade/runtime":2}],17:[function(require,module,exports){
 'use strict';
 var moment = require('moment-timezone');
 var cities = require('./cities');
@@ -16166,4 +16445,4 @@ module.exports = {
 
 
 
-},{"./bar-info.jade":10,"./bar.jade":11,"./cities":12,"./city.jade":13,"jquery":3,"moment-timezone":5}]},{},[9]);
+},{"./bar-info.jade":13,"./bar.jade":14,"./cities":15,"./city.jade":16,"jquery":3,"moment-timezone":5}]},{},[12]);

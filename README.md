@@ -1,36 +1,13 @@
 # Singular TimeZones
 
-## Dependencies
+- Mi primer proyecto de test
 
-- Nodejs
-- Apache Cordova
-- Android SDK
-- IOS SDK
-- Bower
+### Use
 
-## Use
-### Global installs
 ```
-$ npm install -g gulp
-$ npm install -g bower
-$ npm install -g cordova
-```
-### Local installs
-```
-$ npm install
-$ bower install
-```
-### Development command
-```
-$ gulp
-```
-### Production commands
-```
-$ gulp build
-$ gulp server-www
+	$ npm install
+	$ npm start
 
-$ cordova build [platform]
-$ cordova emulate [platform]
 ```
 
 

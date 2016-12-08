@@ -23,10 +23,6 @@ function Time () {
     return moment(date, 'HH:mm').subtract(1, 'd').format('MMMM DD');
   };
 
-  Time.prototype.currentTime = function(time) {
-    return moment(time, 'HH:mm').format('MMMM DD');
-  };
-
   Time.prototype.printTime = function() {
     $('#your_time').html(this.now);
     $('#current_time').html(this.now);

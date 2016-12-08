@@ -1,22 +1,20 @@
 'use strict';
 
-var $ = require('jquery');
+var $ = require('../lib/overlaps');
 var template = require('../templates');
 var line = require('./line');
 var Time = require('./time');
 var moment = require('moment-timezone');
+var move = require('./move');
+var Hammer = require('hammerjs');
 
-var list = [];
-var $cover = $('.bar');
-var $days = $('.bars');
-var $day = $('.day');
-var $off = $('.offBar');
-var $on = $('.onBar');
-var $date = $('.barDate');
-var $time = $('.barTime');
 var $moveZone = $('.moveZone');
 var $zone = $('.barsZone');
 var $infoZone = $('.infoBarsZone');
+var content = document.querySelector('.content');
+var hammer = new Hammer(content, {
+  touchAction: 'pan-x'
+});
 
 function _getCity ($el) {
   var city = $el
@@ -25,6 +23,7 @@ function _getCity ($el) {
     .text();
   return city;
 }
+
 function _setBarInfo (city) {
   var data = {};
   $.each(template.zones, function (index, element) {
@@ -52,7 +51,6 @@ function _getBar (city) {
       bar.info = $('.barInfo')[index];
       bar.element = $('.bar')[index];
     }
-
   });
   return bar;
 }
@@ -79,9 +77,9 @@ function _toggleButton (action, button) {
   }
 }
 
-
 var _getBarTime = function(index) {
-  var barTime = $time.get(index);
+  
+  var barTime = $('.barTime').get(index);
   var barTimeText = $(barTime).text();
   var barTimeList = barTimeText.split(':');
   var hoursStr = barTimeList[0];
@@ -93,14 +91,83 @@ var _getBarTime = function(index) {
   return time;
 };
 
+function _activeBar () {
+
+  var $line = $('#line');
+  var $day = $('.day');
+  var collides = $day.overlaps($line);
+  var barsLength = $('.bars').length;
+  var collidesLength = collides.targets.length;
+
+  $('.barTime').each(function (index, element) {
+    var time = $(element).text();
+    var yourTagTime = $('#your_time').text();
+    if(time === yourTagTime && collidesLength === barsLength){
+      $day.removeClass('yourOnBar');
+      $(collides.targets[index]).removeClass('onBar');
+      $(collides.targets[index]).addClass('yourOnBar');
+    } else if(time !== yourTagTime && collidesLength === barsLength){
+      $day.removeClass('onBar');
+      $(collides.targets).addClass('onBar');
+    }
+  });
+}
+
 var _resetPosition = function() {
-  $moveZone.css('left', 0);
+
+  $('.barCity').each(function (index, element) {
+    var city = $(element).text()
+    var data = _setBarInfo(city);
+    var date = $('.barDate').get(index);
+    $(date).text(data.date);
+    var time = $('.barTime').get(index);
+    $(time).text(data.time);
+    _setPosition(index);
+    _activeBar()   
+   
+  });
 };
 
 var _resolvePosition = function(bar, position) {
   $(bar).css('left', position);
 };
 
+var _setPosition = function(index) {
+  
+  index = index || 0;
+  var bar = $('.bars').get(index);
+  var screenWidth = screen.width;
+  var barsWidth = $('.bars').width();
+  var halfWidth = (barsWidth / 2) - (screenWidth / 2);
+  var dayWidth = $('.day').width();
+  var hourWidth = dayWidth / 24;
+  var minuteWidth = hourWidth / 60;
+
+  var time = _getBarTime(index);
+
+  var middlePosition = -halfWidth;
+  var minutesWith = minuteWidth * time.minutes;
+  var minutesPosition = (-minutesWith);
+
+  var hourPosition,
+      position;
+  
+  $moveZone.css('left', 0);
+
+  if(time.hour > 12){
+    hourPosition = -(hourWidth * (time.hour - 12));
+    position = middlePosition + hourPosition + minutesPosition;
+    _resolvePosition(bar, position);
+  } else if(time.hour < 12){
+    hourPosition = hourWidth * (12 - time.hour);
+    position = middlePosition + hourPosition + minutesPosition;
+    _resolvePosition(bar, position);
+  } else if(time.hour === 12){
+    position = middlePosition + minutesPosition;
+    _resolvePosition(bar, position);
+  }
+  
+};
 
 var add = function (event) {
   
@@ -115,9 +182,20 @@ var add = function (event) {
 
   $.when(_render($zone, template.bar))
     .then(function () {
-      _render($infoZone, template.barInfo, data)
-      line.getDown()
-    });
+      var time = new Time();
+      _render($infoZone, template.barInfo, data);
+      time.printTime();
+      line.getDown();
+
+      if($('.bars').length > 1){
+        _resetPosition();
+      }
+
+      _setPosition();
+      _activeBar();
+      hammer.on('pan', move);
+    })
+
 };
 
 var remove = function(event) {
@@ -125,54 +203,22 @@ var remove = function(event) {
   var $button = $(event.target);
   var city = _getCity($button);
   var bar = _getBar(city);
-  
+  var time = new Time();
   _toggleButton('remove', $button);
 
   $(bar.info).remove();
   $(bar.element).remove();
-  
+
+  time.printTime();
+  line.getUp();
+  _resetPosition();
+  _activeBar();
 };
 
-var setPosition = function() {
-
-  $info.each(function (index) {
-    var bar = $days.get(index);
-    var screenWidth = screen.width;
-    var barsWidth = $days.width();
-    var halfWidth = (barsWidth / 2) - (screenWidth / 2);
-    var dayWidth = $day.width();
-    var hourWidth = dayWidth / 24;
-    var minuteWidth = hourWidth / 60;
-
-    var time = _getBarTime(index);
-
-    var middlePosition = -halfWidth;
-    var minutesWith = minuteWidth * time.minutes;
-    var minutesPosition = (-minutesWith);
-
-    var hourPosition,
-        position;
-
-    _resetPosition();
-
-    if(time.hour > 12){
-      hourPosition = -(hourWidth * (time.hour - 12));
-      position = middlePosition + hourPosition + minutesPosition;
-      _resolvePosition(bar, position);
-    } else if(time.hour < 12){
-      hourPosition = hourWidth * (12 - time.hour);
-      position = middlePosition + hourPosition + minutesPosition;
-      _resolvePosition(bar, position);
-    } else if(time.hour === 12){
-      position = middlePosition + minutesPosition;
-      _resolvePosition(bar, position);
-    }
-  });
-};
 
 module.exports = {
   add: add,
   remove: remove,
-  setPosition: setPosition,
-  zone: $zone
+  activeBar: _activeBar,
+  setBarInfo: _setBarInfo
 }

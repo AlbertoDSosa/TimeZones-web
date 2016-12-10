@@ -1,5 +1,5 @@
 ### Tareas por hacer
 
-- Estilos responsive para todo.
 - Un storage nuevo.
+- Solucionar height para todos los navegadores.
 

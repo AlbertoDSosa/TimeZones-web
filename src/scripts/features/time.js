@@ -8,11 +8,11 @@ function Time () {
   }
 
   Time.prototype.incrementTime = function(time) {
-    return moment(time, 'HH:mm').add(10, 'm').format('HH:mm');
+    return moment(time, 'HH:mm').add(1, 'H').format('HH:mm');
   };
 
   Time.prototype.decrementTime = function(time) {
-    return moment(time, 'HH:mm').subtract(10, 'm').format('HH:mm');
+    return moment(time, 'HH:mm').subtract(1, 'H').format('HH:mm');
   };
 
   Time.prototype.incrementDay = function(date) {

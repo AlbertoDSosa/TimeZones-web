@@ -5,16 +5,12 @@ var template = require('../templates');
 var line = require('./line');
 var Time = require('./time');
 var moment = require('moment-timezone');
-var move = require('./move');
-var Hammer = require('hammerjs');
 
 var $moveZone = $('.moveZone');
 var $zone = $('.barsZone');
 var $infoZone = $('.infoBarsZone');
-var content = document.querySelector('.content');
-var hammer = new Hammer(content, {
-  touchAction: 'pan-x'
-});
+
+
 
 function _getCity ($el) {
   var city = $el
@@ -193,7 +189,7 @@ var add = function (event) {
 
       _setPosition();
       _activeBar();
-      hammer.on('pan', move);
+      
     })
 
 };

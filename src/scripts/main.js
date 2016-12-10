@@ -6,6 +6,13 @@ var template = require('./templates');
 var Time = require('./features/time');
 var bar = require('./features/bar');
 var line = require('./features/line');
+var move = require('./features/move')
+var Hammer = require('hammerjs');
+
+var content = document.querySelector('.content');
+var hammer = new Hammer(content, {
+  touchAction: 'pan-x'
+});
 
 $('#home').hide();
 
@@ -20,6 +27,9 @@ $.when(menu.listCities()).then(function () {
 	addMenu.$buttomAdd
 		.on('click', bar.add);
 })
+
+hammer.on('swipeleft', move.left);
+hammer.on('swiperight', move.right);
 
 $('.addsClose').click(function () {
 	$('.adds').fadeOut();

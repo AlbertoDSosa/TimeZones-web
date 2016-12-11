@@ -45,7 +45,7 @@ function _getBar (city) {
     var cityBar = $(element).text();
     if(city === cityBar){
       bar.info = $('.barInfo')[index];
-      bar.element = $('.bar')[index];
+      bar.element = $('.bars')[index];
     }
   });
   return bar;

@@ -57,7 +57,10 @@ gulp.task('scripts', function () {
 
 gulp.task('styles', ['assets'], function () {
   gulp.src(config.styles.input)
-    .pipe(stylus({ use: nib() }))
+    .pipe(stylus({
+    	use: nib(),
+    	'include css': true
+    }))
     .pipe(gulp.dest(config.styles.output));
 });
 

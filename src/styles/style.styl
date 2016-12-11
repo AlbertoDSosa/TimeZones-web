@@ -1,12 +1,13 @@
-@import 'normalize'
+@import 'reset.css'
 @import 'nib'
 @import 'fonts'
 
+html
+	font-size 16px
  
 body
 	background #232426
 	font-family 'open_sansregular'
-	font-size 16px
 	width 100vw
 	height 100vh
 
@@ -261,15 +262,9 @@ body
 	top -2px
 	width 1.2px
 
-.line
-	height 1.2em
+/*.line
+	height 1.2em*/
 
-.bar
-	position relative
-	width 100%
-	height 100%
-	
-	
 	
 .bars
 	position relative
@@ -334,8 +329,6 @@ body
 	width 26.7em
 	height 100%
 	
-	
-	
 .infoBarsZone
 	position fixed
 	z-index 5
@@ -346,13 +339,14 @@ body
 	
 .barInfo
 	position relative
+	margin-bottom .75rem
 	font-size 1.3em
+	height 1.8rem
 	text-shadow -1px -1px 1px black
-	width 8em
-	top 2.05em
+	width 100%
+	top 2.1em
 	right 0
 	left 8.6em
-	margin-bottom .58em
 
 .barTime
 	font-family 'open_sansbold'
@@ -364,6 +358,7 @@ body
 .barTime
 	display inline-block
 	color white
+	margin-top .2rem
 
 .barCity
 .barDate
@@ -397,31 +392,31 @@ body
 
 @media screen and (min-width:359px)
 
-	body
+	html
 		font-size 18px
 		
 @media screen and (min-width:370px)
 
-	body
+	html
 		font-size 19px
 
 
 @media screen and (min-width:380px)
 
-	body
+	html
 		font-size 20px
 		
 @media screen and (min-width:410px)
 
-	body
+	html
 		font-size 21px
 
 @media screen and (min-width:512px)
 
-	body
+	html
 		font-size 28px
 
 @media screen and (min-width:712px)
 
-	body
+	html
 		font-size 38px

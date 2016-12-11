@@ -4,7 +4,7 @@ var $ = require('jquery');
 
 
 var $line = $('.line');
-var initialHeight = 19;
+var initialHeight = 30;
 
 function _getValues() {
 	

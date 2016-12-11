@@ -9,8 +9,8 @@ var line = require('./features/line');
 var move = require('./features/move')
 var Hammer = require('hammerjs');
 
-var content = document.querySelector('.content');
-var hammer = new Hammer(content, {
+var touchZone = document.querySelector('.yourTimeZone');
+var hammer = new Hammer(touchZone, {
   touchAction: 'pan-x'
 });
 
